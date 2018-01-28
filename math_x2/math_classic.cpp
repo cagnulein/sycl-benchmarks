@@ -1,7 +1,8 @@
 #include <iostream>
 #include <math.h>
+#include "../includes/dimensions.h"
 
-const int LENGTH = 0x1FFFFFFF;
+const int LENGTH = IMAGE_SIZE;
 int writeResult[2];
 
 int main()

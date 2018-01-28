@@ -1,8 +1,9 @@
 #include <CL/sycl.hpp>
 #include <iostream>
+#include "../includes/dimensions.h"
  
 namespace sycl = cl::sycl;
-constexpr int LENGTH = 0x2FFFFFFF;
+constexpr int LENGTH = IMAGE_SIZE;
 int data[LENGTH];
  
 int main()

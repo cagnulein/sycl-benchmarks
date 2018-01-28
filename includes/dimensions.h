@@ -1,0 +1,4 @@
+#define IMAGE_WIDTH     (20000L)
+#define IMAGE_HEIGHT    (40000L)
+#define IMAGE_SIZE      (IMAGE_WIDTH*IMAGE_HEIGHT)
+

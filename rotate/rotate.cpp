@@ -2,10 +2,8 @@
 #include <iostream>
 #include <math.h>
 #include <chrono>
+#include "../includes/dimensions.h"
  
-#define IMAGE_WIDTH     (20000L)
-#define IMAGE_HEIGHT    (40000L)
-#define IMAGE_SIZE      (IMAGE_WIDTH*IMAGE_HEIGHT)
 #define VERIFY_INPUT	0
 #define VERIFY		0
 unsigned char* old_image;
