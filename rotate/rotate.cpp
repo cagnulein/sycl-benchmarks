@@ -71,8 +71,8 @@ int main(int argc, char *argv[]) {
     float maxx=std::max(Point1x,std::max(Point2x,Point3x));
     float maxy=std::max(Point1y,std::max(Point2y,Point3y));
 
-    int DestBitmapWidth=(int)ceil(fabs(maxx)-minx);
-    int DestBitmapHeight=(int)ceil(fabs(maxy)-miny);
+    long DestBitmapWidth=(int)ceil(fabs(maxx)-minx);
+    long DestBitmapHeight=(int)ceil(fabs(maxy)-miny);
 
     new_image = new unsigned char[DestBitmapWidth*DestBitmapHeight];
     if(!new_image)
