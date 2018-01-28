@@ -11,7 +11,7 @@ unsigned char* old_image;
 unsigned char* new_image;
 namespace sycl = cl::sycl;
 
-int main(void) {
+int main(int argc, char *argv[]) {
     old_image = new unsigned char[IMAGE_SIZE];
     if(!old_image)
     {
@@ -48,6 +48,11 @@ int main(void) {
 #endif
 
     double degrees = 180;
+    if(argc > 1)
+    {
+       degrees = atof(argv[1]);
+       //printf("%f degrees forced\n", degrees);
+    }
 
     float radians=(2*3.1416*degrees)/360;
 
