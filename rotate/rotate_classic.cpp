@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 #include <algorithm>
+#include <chrono>
+#include <iostream>
 
 #define IMAGE_WIDTH	(20000L)
 #define IMAGE_HEIGHT	(40000L)
@@ -53,6 +55,7 @@ int main(int argc, char *argv[]) {
     for(int i=0; i<DestBitmapWidth; i++)
         new_image[i] = new unsigned char[DestBitmapHeight];
 
+//    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     for(int x=0;x<DestBitmapWidth;x++)
     {
        for(int y=0;y<DestBitmapHeight;y++)
@@ -60,9 +63,11 @@ int main(int argc, char *argv[]) {
           int SrcBitmapx=(int)((x+minx)*cosine+(y+miny)*sine);
           int SrcBitmapy=(int)((y+miny)*cosine-(x+minx)*sine);
           if(SrcBitmapx>=0&&SrcBitmapx<IMAGE_WIDTH&&SrcBitmapy>=0&& SrcBitmapy<IMAGE_HEIGHT)
-              new_image[x][y]=old_image[SrcBitmapx][SrcBitmapy]; 
+              new_image[x][y]=old_image[SrcBitmapx][SrcBitmapy];
        }
     }
+//    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+//    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
 
 #if VERIFY==1
     unsigned char old = new_image[0][0];

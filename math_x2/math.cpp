@@ -12,7 +12,7 @@ int main()
     {
         // create a queue to enqueue work on cpu device (there is also gpu_selector)
         //sycl::queue myQueue(sycl::gpu_selector{});
-        sycl::queue myQueue(sycl::host_selector{});
+        sycl::queue myQueue(sycl::gpu_selector{});
 
         // wrap the data variable in a buffer
         sycl::buffer<int, 1> resultBuf(data, sycl::range<1>(2));
