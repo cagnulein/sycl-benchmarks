@@ -11,11 +11,11 @@ int main()
     // new block scope to ensure all SYCL tasks are completed before exiting block
     {
         // create a queue to enqueue work on cpu device (there is also gpu_selector)
-        sycl::queue myQueue(sycl::host_selector{});
         //sycl::queue myQueue(sycl::host_selector{});
+        sycl::queue myQueue(sycl::gpu_selector{});
 
         // wrap the data variable in a buffer
-        sycl::buffer<int, 1> resultBuf(data, sycl::range<1>(1));
+        sycl::buffer<int, 1> resultBuf(data, sycl::range<1>(LENGTH));
 
         // submit commands to the queue
         myQueue.submit([&](sycl::handler& cgh) {
@@ -24,7 +24,7 @@ int main()
             // enqueue a parallel_for task: this is kernel function that will be
             // compiled by a device compiler and executed on a device
             cgh.parallel_for<class simple_test>(sycl::range<1>(LENGTH), [=](sycl::id<1> idx) {
-                writeResult[0] = sycl::tan(static_cast<double>(idx[0])) * sycl::atan(static_cast<double>(idx[0]));
+                writeResult[idx[0]] = sycl::tan(static_cast<double>(idx[0])) * sycl::atan(static_cast<double>(idx[0]));
             });
             // end of the kernel function
         });

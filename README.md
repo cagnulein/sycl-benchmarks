@@ -60,9 +60,9 @@ user	3m56.723s
 sys	0m0.016s
 
 ### CPU 1 core without SYCL
-real	1m12.483s
-user	1m12.483s
-sys	0m0.000s
+real	1m47.239s
+user	1m47.231s
+sys	0m0.004s
 
 #### GPU
 real	0m4.820s
