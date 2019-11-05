@@ -20,7 +20,7 @@ real	0m9.376s
 user	0m0.386s
 sys	0m0.173s
 
-### math
+### math (0x2FFFFFFF iterations)
 #### CPU 1 core with SYCL
 real	3m3.545s
 user	3m3.522s
@@ -35,6 +35,23 @@ sys	0m0.000s
 real	0m43.278s
 user	0m0.270s
 sys	0m0.025s
+
+### math (0x1FFFFFFF iterations)
+#### CPU 1 core with SYCL
+real	2m0.384s
+user	2m0.345s
+sys	0m0.024s
+
+### CPU 1 core without SYCL
+real	1m12.310s
+user	1m12.301s
+sys	0m0.008s
+
+#### GPU
+real	0m3.756s
+user	0m0.251s
+sys	0m0.032s
+
 
 ### math x2
 #### CPU 1 core with SYCL

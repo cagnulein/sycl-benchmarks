@@ -3,7 +3,7 @@
 #include <math.h>
  
 namespace sycl = cl::sycl;
-constexpr int LENGTH = 0x2FFFFFFF;
+constexpr int LENGTH = 0x1FFFFFFF;
 int data[LENGTH];
  
 int main()
@@ -11,7 +11,7 @@ int main()
     // new block scope to ensure all SYCL tasks are completed before exiting block
     {
         // create a queue to enqueue work on cpu device (there is also gpu_selector)
-        sycl::queue myQueue(sycl::gpu_selector{});
+        sycl::queue myQueue(sycl::host_selector{});
         //sycl::queue myQueue(sycl::host_selector{});
 
         // wrap the data variable in a buffer

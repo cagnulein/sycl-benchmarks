@@ -1,7 +1,7 @@
 #include <iostream>
 #include <math.h>
 
-const int LENGTH = 0x2FFFFFFF;
+const int LENGTH = 0x1FFFFFFF;
 int writeResult;
 
 int main()
