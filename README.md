@@ -1,6 +1,7 @@
 ## System Used:
-> CPU: Intel(R) Core(TM) i7-7820EQ CPU @ 3.00GHz (family: 0x6, model: 0x9e, stepping: 0x9)
-> GPU: Intel HD Graphics 630 (Device ID 0x591B)
+CPU: Intel(R) Core(TM) i7-7820EQ CPU @ 3.00GHz (family: 0x6, model: 0x9e, stepping: 0x9)
+
+GPU: Intel HD Graphics 630 (Device ID 0x591B)
 
 ## Benchmarks
 ### fill_array
