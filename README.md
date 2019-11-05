@@ -20,6 +20,22 @@ real	0m9.376s
 user	0m0.386s
 sys	0m0.173s
 
+### math
+#### CPU 1 core with SYCL
+real	3m3.545s
+user	3m3.522s
+sys	0m0.020s
+
+### CPU 1 core without SYCL
+real	1m51.823s
+user	1m51.808s
+sys	0m0.000s
+
+#### GPU
+real	0m43.278s
+user	0m0.270s
+sys	0m0.025s
+
 ## Resources:
 1) http://pramodkumbhar.com/2019/07/intels-one-api-what-we-know-and-how-to-get-ready/
 2) https://github.com/intel/llvm/releases/tag/expoclcpu-1.0.0
