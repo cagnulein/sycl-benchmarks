@@ -5,10 +5,15 @@ GPU: Intel HD Graphics 630 (Device ID 0x591B)
 
 ## Benchmarks
 ### fill_array
-#### CPU 1 core
+#### CPU 1 core with SYCL
 real	1m0.262s
 user	0m59.397s
 sys	0m0.860s
+
+### CPU 1 core without SYCL
+real	0m3.620s
+user	0m2.847s
+sys	0m0.772s
 
 #### GPU
 real	0m9.376s
