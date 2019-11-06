@@ -5,7 +5,7 @@
 #define IMAGE_WIDTH	(20000L)
 #define IMAGE_HEIGHT	(40000L)
 #define IMAGE_SIZE	(IMAGE_WIDTH*IMAGE_HEIGHT)
-#define VERIFY		FALSE
+#define VERIFY		0
 unsigned char** old_image;
 unsigned char** new_image;
 
@@ -14,7 +14,7 @@ int main(void) {
     for(int i=0; i<IMAGE_WIDTH; i++)
     {
         old_image[i] = new unsigned char[IMAGE_HEIGHT];
-#if VERIFY==TRUE
+#if VERIFY==1
         for(int l=0; l<IMAGE_HEIGHT; l++)
         {
             old_image[i][l] = i;
@@ -59,7 +59,7 @@ int main(void) {
        }
     }
 
-#if VERIFY==TRUE
+#if VERIFY==1
     unsigned char old = new_image[0][0];
     int rep = 0;
     for(int i=0; i<DestBitmapWidth; i++)

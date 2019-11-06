@@ -5,7 +5,7 @@
 #define IMAGE_WIDTH     (20000L)
 #define IMAGE_HEIGHT    (40000L)
 #define IMAGE_SIZE      (IMAGE_WIDTH*IMAGE_HEIGHT)
-#define VERIFY		TRUE
+#define VERIFY		0
 unsigned char* old_image;
 unsigned char* new_image;
 namespace sycl = cl::sycl;
@@ -17,7 +17,7 @@ int main(void) {
        printf("old_image creation error!\n");
        return 1;
     }
-#if VERIFY==TRUE
+#if VERIFY==1
     for(int i=0; i<IMAGE_WIDTH; i++)
     {
         for(int l=0; l<IMAGE_HEIGHT; l++)
@@ -106,7 +106,7 @@ int main(void) {
     }
     // end of scope, so wait for the queued work to complete
 
-#if VERIFY==TRUE
+#if VERIFY==1
     old = new_image[0];
     rep = 0;
     for(int i=0; i<DestBitmapWidth; i++)
