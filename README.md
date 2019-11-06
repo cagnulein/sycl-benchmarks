@@ -10,7 +10,7 @@ real	1m0.262s
 user	0m59.397s
 sys	0m0.860s
 
-### CPU 1 core without SYCL
+#### CPU 1 core without SYCL
 real	0m3.620s
 user	0m2.847s
 sys	0m0.772s
@@ -26,7 +26,7 @@ real	3m3.545s
 user	3m3.522s
 sys	0m0.020s
 
-### CPU 1 core without SYCL
+#### CPU 1 core without SYCL
 real	1m51.823s
 user	1m51.808s
 sys	0m0.000s
@@ -42,7 +42,7 @@ real	2m0.384s
 user	2m0.345s
 sys	0m0.024s
 
-### CPU 1 core without SYCL
+#### CPU 1 core without SYCL
 real	1m12.310s
 user	1m12.301s
 sys	0m0.008s
@@ -59,7 +59,7 @@ real	3m56.758s
 user	3m56.723s
 sys	0m0.016s
 
-### CPU 1 core without SYCL
+#### CPU 1 core without SYCL
 real	1m47.239s
 user	1m47.231s
 sys	0m0.004s
