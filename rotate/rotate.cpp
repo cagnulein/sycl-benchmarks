@@ -16,20 +16,35 @@ int main(void) {
        printf("old_image creation error!\n");
        return 1;
     }
-    new_image = new unsigned char[IMAGE_SIZE];
+
+    double degrees = 180;
+
+    float radians=(2*3.1416*degrees)/360;
+
+    float cosine=(float)cos(radians);
+    float sine=(float)sin(radians);
+
+    float Point1x=(-IMAGE_HEIGHT*sine);
+    float Point1y=(IMAGE_HEIGHT*cosine);
+    float Point2x=(IMAGE_WIDTH*cosine-IMAGE_HEIGHT*sine);
+    float Point2y=(IMAGE_HEIGHT*cosine+IMAGE_WIDTH*sine);
+    float Point3x=(IMAGE_WIDTH*cosine);
+    float Point3y=(IMAGE_WIDTH*sine);
+
+    float minx=std::min((float)0.0,std::min(Point1x,std::min(Point2x,Point3x)));
+    float miny=std::min((float)0.0,std::min(Point1y,std::min(Point2y,Point3y)));
+    float maxx=std::max(Point1x,std::max(Point2x,Point3x));
+    float maxy=std::max(Point1y,std::max(Point2y,Point3y));
+
+    int DestBitmapWidth=(int)ceil(fabs(maxx)-minx);
+    int DestBitmapHeight=(int)ceil(fabs(maxy)-miny);
+
+    new_image = new unsigned char[DestBitmapWidth*DestBitmapHeight];
     if(!new_image)
     {
        printf("new_image creation error!\n");
        return 1;
     }
-
-    double degrees = 180;
-
-    const float _cos = cos(degrees);
-    const float _sin = sin(degrees);
-
-    const int x0 = floor(IMAGE_WIDTH / 2);
-    const int y0 = floor(IMAGE_HEIGHT / 2);
 
     // new block scope to ensure all SYCL tasks are completed before exiting block
     {
@@ -48,14 +63,14 @@ int main(void) {
             auto readImage = inputBuf.get_access<sycl::access::mode::read>(cgh);
             // enqueue a parallel_for task: this is kernel function that will be
             // compiled by a device compiler and executed on a device
-            cgh.parallel_for<class simple_test>(sycl::range<1>(IMAGE_SIZE), [=](sycl::id<1> idx) {
-                int x = idx[0] / IMAGE_HEIGHT;
-                int y = idx[0] % IMAGE_WIDTH;
-                float xPos = _cos * (x - x0) - _sin * (y - y0) + x0;
-                float yPos = _sin * (x - x0) + _cos * (y - y0) + y0;
+            cgh.parallel_for<class simple_test>(sycl::range<1>(DestBitmapWidth*DestBitmapHeight), [=](sycl::id<1> idx) {
+                int x = idx[0] / DestBitmapHeight;
+                int y = idx[0] % DestBitmapHeight;
 
-                if (xPos >= 0 && yPos >= 0 && xPos < IMAGE_WIDTH && yPos < IMAGE_HEIGHT)
-                    writeResult[y * IMAGE_WIDTH + x] = readImage[  (int)(sycl::floor(yPos) * IMAGE_WIDTH + sycl::floor(xPos)) ];
+                int SrcBitmapx=(int)((x+minx)*cosine+(y+miny)*sine);
+                int SrcBitmapy=(int)((y+miny)*cosine-(x+minx)*sine);
+                if(SrcBitmapx>=0&&SrcBitmapx<IMAGE_WIDTH&&SrcBitmapy>=0&& SrcBitmapy<IMAGE_HEIGHT)
+                   writeResult[x*y]=readImage[SrcBitmapx*SrcBitmapy];
 
             });
             // end of the kernel function

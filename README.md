@@ -74,3 +74,4 @@ sys	0m0.036s
 1) http://pramodkumbhar.com/2019/07/intels-one-api-what-we-know-and-how-to-get-ready/
 2) https://github.com/intel/llvm/releases/tag/expoclcpu-1.0.0
 3) https://github.com/intel/llvm/releases/tag/2019-09
+4) http://www.leunen.com/cbuilder/rotbmp.html
