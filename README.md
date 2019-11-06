@@ -72,14 +72,14 @@ sys	0m0.036s
 
 ### rotate image
 #### CPU 1 core without SYCL
-real    0m12.012s
-user    0m11.688s
-sys     0m0.324s
+real    0m12.001s
+user    0m11.708s
+sys     0m0.292s
 
 #### GPU
-real    0m1.535s
-user    0m0.293s
-sys     0m0.145s
+real    0m1.545s
+user    0m0.295s
+sys     0m0.132s
 
 
 ## Resources:
