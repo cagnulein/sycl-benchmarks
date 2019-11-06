@@ -53,8 +53,8 @@ int main(void) {
         sycl::queue myQueue(sycl::gpu_selector{});
 
         // wrap the data variable in a buffer
-        sycl::buffer<unsigned char, 1> resultBuf(new_image, sycl::range<1>(IMAGE_SIZE));
-        sycl::buffer<unsigned char, 1> inputBuf(old_image, sycl::range<1>(IMAGE_SIZE));
+        sycl::buffer<unsigned char, 2> resultBuf(new_image, sycl::range<2>(IMAGE_WIDTH,IMAGE_HEIGHT));
+        sycl::buffer<unsigned char, 2> inputBuf(old_image, sycl::range<2>(IMAGE_WIDTH,IMAGE_HEIGHT));
 
         // submit commands to the queue
         myQueue.submit([&](sycl::handler& cgh) {
@@ -63,14 +63,14 @@ int main(void) {
             auto readImage = inputBuf.get_access<sycl::access::mode::read>(cgh);
             // enqueue a parallel_for task: this is kernel function that will be
             // compiled by a device compiler and executed on a device
-            cgh.parallel_for<class simple_test>(sycl::range<1>(DestBitmapWidth*DestBitmapHeight), [=](sycl::id<1> idx) {
-                int x = idx[0] / DestBitmapHeight;
-                int y = idx[0] % DestBitmapHeight;
+            cgh.parallel_for<class simple_test>(sycl::range<2>(DestBitmapWidth,DestBitmapHeight), [=](sycl::id<2> idx) {
+                int x = idx[0]; //idx[0] / DestBitmapHeight;
+                int y = idx[1]; //idx[0] % DestBitmapHeight;
 
-                int SrcBitmapx=(int)((x+minx)*cosine+(y+miny)*sine);
-                int SrcBitmapy=(int)((y+miny)*cosine-(x+minx)*sine);
-                if(SrcBitmapx>=0&&SrcBitmapx<IMAGE_WIDTH&&SrcBitmapy>=0&& SrcBitmapy<IMAGE_HEIGHT)
-                   writeResult[x*y]=readImage[SrcBitmapx*SrcBitmapy];
+                float SrcBitmapx=((x+minx)*cosine+(y+miny)*sine);
+                float SrcBitmapy=((y+miny)*cosine-(x+minx)*sine);
+                if(SrcBitmapx >= 0 && SrcBitmapx < IMAGE_WIDTH && SrcBitmapy >= 0 && SrcBitmapy < IMAGE_HEIGHT)
+                   writeResult[x][y]=readImage[SrcBitmapx][SrcBitmapy];
 
             });
             // end of the kernel function

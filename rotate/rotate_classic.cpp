@@ -5,16 +5,13 @@
 #define IMAGE_WIDTH	(20000L)
 #define IMAGE_HEIGHT	(40000L)
 #define IMAGE_SIZE	(IMAGE_WIDTH*IMAGE_HEIGHT)
-unsigned char* old_image;
-unsigned char* new_image;
+unsigned char** old_image;
+unsigned char** new_image;
 
 int main(void) {
-    old_image = new unsigned char[IMAGE_SIZE];
-    if(!old_image)
-    {
-       printf("old_image creation error!\n");
-       return 1;
-    }
+    old_image = new unsigned char*[IMAGE_WIDTH];
+    for(int i=0; i<IMAGE_WIDTH; i++)
+        old_image[i] = new unsigned char[IMAGE_HEIGHT];
 
     double degrees = 180;
 
@@ -38,12 +35,9 @@ int main(void) {
     int DestBitmapWidth=(int)ceil(fabs(maxx)-minx);
     int DestBitmapHeight=(int)ceil(fabs(maxy)-miny);
 
-    new_image = new unsigned char[DestBitmapWidth*DestBitmapHeight];
-    if(!new_image)
-    {
-       printf("new_image creation error!\n");
-       return 1;
-    }
+    new_image = new unsigned char*[DestBitmapWidth];
+    for(int i=0; i<DestBitmapWidth; i++)
+        new_image[i] = new unsigned char[DestBitmapHeight];
 
     for(int x=0;x<DestBitmapWidth;x++)
     {
@@ -52,7 +46,7 @@ int main(void) {
           int SrcBitmapx=(int)((x+minx)*cosine+(y+miny)*sine);
           int SrcBitmapy=(int)((y+miny)*cosine-(x+minx)*sine);
           if(SrcBitmapx>=0&&SrcBitmapx<IMAGE_WIDTH&&SrcBitmapy>=0&& SrcBitmapy<IMAGE_HEIGHT)
-              new_image[x*y]=old_image[SrcBitmapx*SrcBitmapy]; 
+              new_image[x][y]=old_image[SrcBitmapx][SrcBitmapy]; 
        }
     }
 
