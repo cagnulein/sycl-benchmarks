@@ -5,13 +5,22 @@
 #define IMAGE_WIDTH	(20000L)
 #define IMAGE_HEIGHT	(40000L)
 #define IMAGE_SIZE	(IMAGE_WIDTH*IMAGE_HEIGHT)
+#define VERIFY		FALSE
 unsigned char** old_image;
 unsigned char** new_image;
 
 int main(void) {
     old_image = new unsigned char*[IMAGE_WIDTH];
     for(int i=0; i<IMAGE_WIDTH; i++)
+    {
         old_image[i] = new unsigned char[IMAGE_HEIGHT];
+#if VERIFY==TRUE
+        for(int l=0; l<IMAGE_HEIGHT; l++)
+        {
+            old_image[i][l] = i;
+        }
+#endif
+    }
 
     double degrees = 180;
 
@@ -49,6 +58,26 @@ int main(void) {
               new_image[x][y]=old_image[SrcBitmapx][SrcBitmapy]; 
        }
     }
+
+#if VERIFY==TRUE
+    unsigned char old = new_image[0][0];
+    int rep = 0;
+    for(int i=0; i<DestBitmapWidth; i++)
+    {
+        for(int l=0; l<DestBitmapHeight; l++)
+        {
+            if(old == new_image[i][l])
+                rep++;
+            else
+            {
+                if(rep>0)
+                   printf("%d. Char %d repeated for %d times\n", i, old, rep);
+                old = new_image[i][l];
+                rep = 0;
+            }
+        }
+    }
+#endif
 
     delete old_image;
     delete new_image;

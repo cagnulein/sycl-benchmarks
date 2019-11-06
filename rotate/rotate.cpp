@@ -5,6 +5,7 @@
 #define IMAGE_WIDTH     (20000L)
 #define IMAGE_HEIGHT    (40000L)
 #define IMAGE_SIZE      (IMAGE_WIDTH*IMAGE_HEIGHT)
+#define VERIFY		TRUE
 unsigned char* old_image;
 unsigned char* new_image;
 namespace sycl = cl::sycl;
@@ -16,6 +17,32 @@ int main(void) {
        printf("old_image creation error!\n");
        return 1;
     }
+#if VERIFY==TRUE
+    for(int i=0; i<IMAGE_WIDTH; i++)
+    {
+        for(int l=0; l<IMAGE_HEIGHT; l++)
+        {
+            old_image[(i*IMAGE_HEIGHT)+l] = i;
+        }
+    }
+    unsigned char old = old_image[0];
+    int rep = 0;
+    for(int i=0; i<IMAGE_WIDTH; i++)
+    {
+        for(int l=0; l<IMAGE_HEIGHT; l++)
+        {
+            if(old == old_image[(i*IMAGE_HEIGHT)+l])
+                rep++;
+            else
+            {
+                if(rep>0)
+                   printf("%d. Char %d repeated for %d times\n", i, old, rep);
+                old = old_image[(i*IMAGE_HEIGHT)+l];
+                rep = 0;
+            }
+        }
+    }
+#endif
 
     double degrees = 180;
 
@@ -79,10 +106,26 @@ int main(void) {
     }
     // end of scope, so wait for the queued work to complete
 
-    // buffer will be up-to-date, print result
-    /*for (long int i = 0; i < LENGTH; i++) {
-        std::cout << "data[" << i << "] = " << data[i] << std::endl;
-    }*/
+#if VERIFY==TRUE
+    old = new_image[0];
+    rep = 0;
+    for(int i=0; i<DestBitmapWidth; i++)
+    {
+        for(int l=0; l<DestBitmapHeight; l++)
+        {
+            if(old == new_image[(i*DestBitmapHeight)+l])
+                rep++;
+            else
+            {
+                if(rep>0)
+                   printf("%d. Char %d repeated for %d times\n", i, old, rep);
+                old = new_image[(i*DestBitmapHeight)+l];
+                rep = 0;
+            }
+        }
+    }
+#endif
+
     return 0;
 }
  
