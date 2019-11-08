@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
         sycl::queue myQueue(sycl::gpu_selector{});
 
         // wrap the data variable in a buffer
-        sycl::buffer<unsigned char, 2> resultBuf(new_image, sycl::range<2>(IMAGE_WIDTH,IMAGE_HEIGHT));
+        sycl::buffer<unsigned char, 2> resultBuf(new_image, sycl::range<2>(DestBitmapWidth,DestBitmapHeight));
         sycl::buffer<unsigned char, 2> inputBuf(old_image, sycl::range<2>(IMAGE_WIDTH,IMAGE_HEIGHT));
 
         // submit commands to the queue
