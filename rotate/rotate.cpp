@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
        return 1;
     }
 
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    //std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     // new block scope to ensure all SYCL tasks are completed before exiting block
     {
         // create a queue to enqueue work on cpu device (there is also gpu_selector)
@@ -113,8 +113,8 @@ int main(int argc, char *argv[]) {
         // end of the queue commands
     }
     // end of scope, so wait for the queued work to complete
-    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
+    //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    //std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
 
 #if VERIFY==1
 #if VERIFY_INPUT==0

@@ -5,82 +5,55 @@ GPU: Intel HD Graphics 630 (Device ID 0x591B)
 
 ## Benchmarks
 ### fill_array
-#### CPU 1 core with SYCL
-real	1m0.262s
-user	0m59.397s
-sys	0m0.860s
+#### cpu 1 core
 
-#### CPU 1 core without SYCL
-real	0m3.620s
-user	0m2.847s
-sys	0m0.772s
+real    0m1.426s
+user    0m0.589s
+sys     0m0.837s
+#### gpu
 
-#### GPU
-real	0m9.376s
-user	0m0.386s
-sys	0m0.173s
-
-### math (0x2FFFFFFF iterations)
-#### CPU 1 core with SYCL
-real	3m3.545s
-user	3m3.522s
-sys	0m0.020s
-
-#### CPU 1 core without SYCL
-real	1m51.823s
-user	1m51.808s
-sys	0m0.000s
-
-#### GPU
-real	0m43.278s
-user	0m0.270s
-sys	0m0.025s
-
-### math (0x1FFFFFFF iterations)
-#### CPU 1 core with SYCL
-real	2m0.384s
-user	2m0.345s
-sys	0m0.024s
-
-#### CPU 1 core without SYCL
-real	1m12.310s
-user	1m12.301s
-sys	0m0.008s
-
-#### GPU
-real	0m3.756s
-user	0m0.251s
-sys	0m0.032s
+real    0m1.293s
+user    0m0.368s
+sys     0m0.924s
 
 
-### math x2
-#### CPU 1 core with SYCL
-real	3m56.758s
-user	3m56.723s
-sys	0m0.016s
+### math
+#### cpu 1 core
 
-#### CPU 1 core without SYCL
-real	1m47.239s
-user	1m47.231s
-sys	0m0.004s
+real    1m26.930s
+user    1m26.925s
+sys     0m0.004s
+#### gpu
 
-#### GPU
-real	0m4.820s
-user	0m0.405s
-sys	0m0.036s
+real    0m5.833s
+user    0m0.170s
+sys     0m0.070s
 
 
-### rotate image
-#### CPU 1 core without SYCL
-real    0m12.001s
-user    0m11.708s
-sys     0m0.292s
+### math_x2
+#### cpu 1 core
 
-#### GPU
-real    0m1.545s
-user    0m0.295s
-sys     0m0.132s
+real    2m10.083s
+user    2m10.070s
+sys     0m0.004s
+#### gpu
 
+real    0m7.533s
+user    0m0.214s
+sys     0m0.033s
+
+
+### rotate
+#### cpu 1 core
+
+real    0m2.440s
+user    0m2.087s
+sys     0m0.352s
+#### gpu
+
+real    0m1.801s
+user    0m0.301s
+sys     0m0.147s
 
 ## Resources:
 1) http://pramodkumbhar.com/2019/07/intels-one-api-what-we-know-and-how-to-get-ready/
