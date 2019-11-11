@@ -1,2 +1,2 @@
-export PATH=$HOME/sycl/llvm/build/bin:$PATH
-export LD_LIBRARY_PATH=$HOME/sycl/llvm/build/lib:$LD_LIBRARY_PATH
+export PATH=$HOME/sycl/build/bin:$PATH
+export LD_LIBRARY_PATH=$HOME/sycl/build/lib:/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH
