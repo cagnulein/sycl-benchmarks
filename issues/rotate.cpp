@@ -11,6 +11,12 @@ unsigned char* old_image;
 namespace sycl = cl::sycl;
 
 int main(int argc, char *argv[]) {
+    int index = 1761303171;
+    if(argc > 1)
+    {
+       index = atoi(argv[1]);
+    }
+
     old_image = new unsigned char[IMAGE_SIZE];
     {
         sycl::queue myQueue(sycl::gpu_selector{});
@@ -18,7 +24,7 @@ int main(int argc, char *argv[]) {
         myQueue.submit([&](sycl::handler& cgh) {
             auto readImage = inputBuf.get_access<sycl::access::mode::read>(cgh);
             //cgh.parallel_for<class simple_test>(sycl::range<1>(1861303172), [=](sycl::id<1> idx) {  // FASTEST PERFORMANCE!!!
-            cgh.parallel_for<class simple_test>(sycl::range<1>(1761303172), [=](sycl::id<1> idx) {    // SLOWER PERFORMANCE!!!
+            cgh.parallel_for<class simple_test>(sycl::range<1>(index), [=](sycl::id<1> idx) {    // SLOWER PERFORMANCE!!!
             });
         });
     }
