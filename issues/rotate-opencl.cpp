@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     cl::Platform default_platform=all_platforms[0];
-    std::cout << "Using platform: "<<default_platform.getInfo<CL_PLATFORM_NAME>()<<"\n";
+    //std::cout << "Using platform: "<<default_platform.getInfo<CL_PLATFORM_NAME>()<<"\n";
 
     // get default device (CPUs, GPUs) of the default platform
     std::vector<cl::Device> all_devices;
@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 
     // use device[1] because that's a GPU; device[0] is the CPU
     cl::Device default_device=all_devices[0];
-    std::cout<< "Using device: "<<default_device.getInfo<CL_DEVICE_NAME>()<<"\n";
+    //std::cout<< "Using device: "<<default_device.getInfo<CL_DEVICE_NAME>()<<"\n";
 
     // a context is like a "runtime link" to the device and platform;
     // i.e. communication is possible
