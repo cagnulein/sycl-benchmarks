@@ -30,5 +30,5 @@ Index           Time 1st try    Time 2nd try    Time 3rd try
 </pre>
 
 ### Releated issues:
-https://github.com/intel/compute-runtime/issues/235
+https://github.com/intel/compute-runtime/issues/235  
 https://github.com/intel/llvm/issues/813
