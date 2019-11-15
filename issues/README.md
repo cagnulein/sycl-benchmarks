@@ -28,3 +28,7 @@ Index           Time 1st try    Time 2nd try    Time 3rd try
 1761303183      1.263           1.246           1.239  
 1761303184      1.847           1.887           1.845  
 </pre>
+
+### Releated issues:
+https://github.com/intel/compute-runtime/issues/235
+https://github.com/intel/llvm/issues/813
