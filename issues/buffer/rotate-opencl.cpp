@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
 
     // read result from GPU to here
     //queue.enqueueReadBuffer(buffer_A, CL_TRUE, 0, sizeof(char)*IMAGE_SIZE, old_image);
-    //queue.enqueueReadBuffer(buffer_B, CL_TRUE, 0, sizeof(char)*DestBitmapWidth*DestBitmapHeight, new_image);
+    queue.enqueueReadBuffer(buffer_B, CL_TRUE, 0, sizeof(char)*DestBitmapWidth*DestBitmapHeight, new_image);
 
     /*std::cout << "result: {";
     for (int i=0; i<n; i++) {
