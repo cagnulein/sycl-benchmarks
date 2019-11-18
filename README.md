@@ -60,3 +60,4 @@ sys     0m0.147s
 2) https://github.com/intel/llvm/releases/tag/expoclcpu-1.0.0
 3) https://github.com/intel/llvm/releases/tag/2019-09
 4) http://www.leunen.com/cbuilder/rotbmp.html
+5) https://github.com/intel/compute-runtime/issues/235
