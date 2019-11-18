@@ -65,25 +65,25 @@ int main(int argc, char *argv[]) {
 
 
     // create buffers on device (allocate space on GPU)
-    cl::Buffer buffer_A(context, CL_MEM_READ_WRITE, sizeof(char) * IMAGE_SIZE);
+    cl::Buffer buffer_A(context, CL_MEM_READ_ONLY, sizeof(char) * IMAGE_SIZE);
     cl::Buffer buffer_B(context, CL_MEM_READ_WRITE, sizeof(char) * DestBitmapWidth * DestBitmapHeight);
 
     // create a queue (a queue of commands that the GPU will execute)
     cl::CommandQueue queue(context, default_device);
 
     // push write commands to queue
-    queue.enqueueWriteBuffer(buffer_A, CL_TRUE, 0, sizeof(char)*IMAGE_SIZE, old_image);
+    //queue.enqueueWriteBuffer(buffer_A, CL_TRUE, 0, sizeof(char)*IMAGE_SIZE, old_image);
     queue.enqueueWriteBuffer(buffer_B, CL_TRUE, 0, sizeof(char)*DestBitmapWidth*DestBitmapHeight, new_image);
 
     // RUN ZE KERNEL
     cl::Kernel simple_add(program, "simple_add");
     simple_add.setArg(0, buffer_A);
     simple_add.setArg(1, buffer_B);
-    queue.enqueueNDRangeKernel(simple_add,cl::NullRange,cl::NDRange(DestBitmapWidth*DestBitmapHeight),cl::NullRange);
+    queue.enqueueNDRangeKernel(simple_add,cl::NullRange,cl::NDRange(1),cl::NullRange);
 
     // read result from GPU to here
-    queue.enqueueReadBuffer(buffer_A, CL_TRUE, 0, sizeof(char)*IMAGE_SIZE, old_image);
-    queue.enqueueReadBuffer(buffer_B, CL_TRUE, 0, sizeof(char)*DestBitmapWidth*DestBitmapHeight, new_image);
+    //queue.enqueueReadBuffer(buffer_A, CL_TRUE, 0, sizeof(char)*IMAGE_SIZE, old_image);
+    //queue.enqueueReadBuffer(buffer_B, CL_TRUE, 0, sizeof(char)*DestBitmapWidth*DestBitmapHeight, new_image);
 
     /*std::cout << "result: {";
     for (int i=0; i<n; i++) {

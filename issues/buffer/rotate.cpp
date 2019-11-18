@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
             auto readImage = inputBuf.get_access<sycl::access::mode::read>(cgh);
             // enqueue a parallel_for task: this is kernel function that will be
             // compiled by a device compiler and executed on a device
-            cgh.parallel_for<class simple_test>(sycl::range<2>(DestBitmapWidth,DestBitmapHeight), [=](sycl::id<2> idx) {
+            cgh.parallel_for<class simple_test>(sycl::range<1>(1), [=](sycl::id<1> idx) {
             });
             // end of the kernel function
         });
