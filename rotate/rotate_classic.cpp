@@ -29,22 +29,22 @@ int main(int argc, char *argv[]) {
        //printf("%f degrees forced\n", degrees);
     }
 
-    float radians=(2*3.1416*degrees)/360;
+    FLOAT_PRECISION radians=(2*3.1416*degrees)/360;
 
-    float cosine=(float)cos(radians);
-    float sine=(float)sin(radians);
+    FLOAT_PRECISION cosine=(FLOAT_PRECISION)cos(radians);
+    FLOAT_PRECISION sine=(FLOAT_PRECISION)sin(radians);
 
-    float Point1x=(-IMAGE_HEIGHT*sine);
-    float Point1y=(IMAGE_HEIGHT*cosine);
-    float Point2x=(IMAGE_WIDTH*cosine-IMAGE_HEIGHT*sine);
-    float Point2y=(IMAGE_HEIGHT*cosine+IMAGE_WIDTH*sine);
-    float Point3x=(IMAGE_WIDTH*cosine);
-    float Point3y=(IMAGE_WIDTH*sine);
+    FLOAT_PRECISION Point1x=(-IMAGE_HEIGHT*sine);
+    FLOAT_PRECISION Point1y=(IMAGE_HEIGHT*cosine);
+    FLOAT_PRECISION Point2x=(IMAGE_WIDTH*cosine-IMAGE_HEIGHT*sine);
+    FLOAT_PRECISION Point2y=(IMAGE_HEIGHT*cosine+IMAGE_WIDTH*sine);
+    FLOAT_PRECISION Point3x=(IMAGE_WIDTH*cosine);
+    FLOAT_PRECISION Point3y=(IMAGE_WIDTH*sine);
 
-    float minx=std::min((float)0.0,std::min(Point1x,std::min(Point2x,Point3x)));
-    float miny=std::min((float)0.0,std::min(Point1y,std::min(Point2y,Point3y)));
-    float maxx=std::max(Point1x,std::max(Point2x,Point3x));
-    float maxy=std::max(Point1y,std::max(Point2y,Point3y));
+    FLOAT_PRECISION minx=std::min((FLOAT_PRECISION)0.0,std::min(Point1x,std::min(Point2x,Point3x)));
+    FLOAT_PRECISION miny=std::min((FLOAT_PRECISION)0.0,std::min(Point1y,std::min(Point2y,Point3y)));
+    FLOAT_PRECISION maxx=std::max(Point1x,std::max(Point2x,Point3x));
+    FLOAT_PRECISION maxy=std::max(Point1y,std::max(Point2y,Point3y));
 
     int DestBitmapWidth=(int)ceil(fabs(maxx)-minx);
     int DestBitmapHeight=(int)ceil(fabs(maxy)-miny);

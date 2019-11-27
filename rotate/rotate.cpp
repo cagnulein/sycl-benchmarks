@@ -3,14 +3,29 @@
 #include <math.h>
 #include <chrono>
 #include "../includes/dimensions.h"
- 
+
+#define FIXED_DIMENSION 0
+#define CORRECT_EVENESS 1
+#define DIVIDED_BY_16   1
+#define EVENESS_DIVISOR 10
 #define VERIFY_INPUT	0
 #define VERIFY		0
 unsigned char* old_image;
 unsigned char* new_image;
 namespace sycl = cl::sycl;
 
+unsigned char count_divisors(long n) {
+    int count=0;
+    const int limit=256;
+    for (int i=1;i<=limit;i++)
+        if (n%i==0)
+            count++;
+    //printf("%d %d\n", n, count);
+    return count;
+}
+
 int main(int argc, char *argv[]) {
+    int only_print=0;
     old_image = new unsigned char[IMAGE_SIZE];
     if(!old_image)
     {
@@ -49,29 +64,59 @@ int main(int argc, char *argv[]) {
     double degrees = 180;
     if(argc > 1)
     {
-       degrees = atof(argv[1]);
-       //printf("%f degrees forced\n", degrees);
+       	degrees = atof(argv[1]);
+       	//printf("%f degrees forced\n", degrees);
+       	if(argc > 2 && atoi(argv[2])==1)
+		only_print=1;
     }
 
-    float radians=(2*3.1416*degrees)/360;
+    FLOAT_PRECISION radians=(2*3.1416*degrees)/360;
 
-    float cosine=(float)cos(radians);
-    float sine=(float)sin(radians);
+    FLOAT_PRECISION cosine=(FLOAT_PRECISION)cos(radians);
+    FLOAT_PRECISION sine=(FLOAT_PRECISION)sin(radians);
 
-    float Point1x=(-IMAGE_HEIGHT*sine);
-    float Point1y=(IMAGE_HEIGHT*cosine);
-    float Point2x=(IMAGE_WIDTH*cosine-IMAGE_HEIGHT*sine);
-    float Point2y=(IMAGE_HEIGHT*cosine+IMAGE_WIDTH*sine);
-    float Point3x=(IMAGE_WIDTH*cosine);
-    float Point3y=(IMAGE_WIDTH*sine);
+    FLOAT_PRECISION Point1x=(-IMAGE_HEIGHT*sine);
+    FLOAT_PRECISION Point1y=(IMAGE_HEIGHT*cosine);
+    FLOAT_PRECISION Point2x=(IMAGE_WIDTH*cosine-IMAGE_HEIGHT*sine);
+    FLOAT_PRECISION Point2y=(IMAGE_HEIGHT*cosine+IMAGE_WIDTH*sine);
+    FLOAT_PRECISION Point3x=(IMAGE_WIDTH*cosine);
+    FLOAT_PRECISION Point3y=(IMAGE_WIDTH*sine);
 
-    float minx=std::min((float)0.0,std::min(Point1x,std::min(Point2x,Point3x)));
-    float miny=std::min((float)0.0,std::min(Point1y,std::min(Point2y,Point3y)));
-    float maxx=std::max(Point1x,std::max(Point2x,Point3x));
-    float maxy=std::max(Point1y,std::max(Point2y,Point3y));
+    FLOAT_PRECISION minx=std::min((FLOAT_PRECISION)0.0,std::min(Point1x,std::min(Point2x,Point3x)));
+    FLOAT_PRECISION miny=std::min((FLOAT_PRECISION)0.0,std::min(Point1y,std::min(Point2y,Point3y)));
+    FLOAT_PRECISION maxx=std::max(Point1x,std::max(Point2x,Point3x));
+    FLOAT_PRECISION maxy=std::max(Point1y,std::max(Point2y,Point3y));
 
     long DestBitmapWidth=(int)ceil(fabs(maxx)-minx);
     long DestBitmapHeight=(int)ceil(fabs(maxy)-miny);
+
+#if CORRECT_EVENESS==1
+    if(DestBitmapWidth%2)
+       DestBitmapWidth++;
+    if(DestBitmapHeight%2)
+       DestBitmapHeight++;
+
+#if DIVIDED_BY_16==0
+    while(count_divisors(DestBitmapWidth*DestBitmapHeight)<EVENESS_DIVISOR || count_divisors(DestBitmapHeight)<EVENESS_DIVISOR || count_divisors(DestBitmapWidth)<EVENESS_DIVISOR) {
+#else
+    while((DestBitmapWidth*DestBitmapHeight)%16) {
+#endif
+	    if((++DestBitmapWidth)%2)
+	       DestBitmapWidth++;
+	    if((++DestBitmapHeight)%2)
+	       DestBitmapHeight++;
+    }
+#endif
+
+    if(only_print) {
+       printf("%ld %ld %ld\n",DestBitmapWidth,DestBitmapHeight,DestBitmapWidth*DestBitmapHeight);
+       return 0;
+    }
+
+#if FIXED_DIMENSION==1
+    DestBitmapWidth=45000;
+    DestBitmapHeight=45000;
+#endif
 
     new_image = new unsigned char[DestBitmapWidth*DestBitmapHeight];
     if(!new_image)
@@ -79,7 +124,6 @@ int main(int argc, char *argv[]) {
        printf("new_image creation error!\n");
        return 1;
     }
-
     //std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     // new block scope to ensure all SYCL tasks are completed before exiting block
     {
@@ -94,7 +138,7 @@ int main(int argc, char *argv[]) {
         // submit commands to the queue
         myQueue.submit([&](sycl::handler& cgh) {
             // get access to the buffer for writing
-            auto writeResult = resultBuf.get_access<sycl::access::mode::write>(cgh);
+            auto writeResult = resultBuf.get_access<sycl::access::mode::discard_write>(cgh);
             auto readImage = inputBuf.get_access<sycl::access::mode::read>(cgh);
             // enqueue a parallel_for task: this is kernel function that will be
             // compiled by a device compiler and executed on a device
@@ -102,8 +146,8 @@ int main(int argc, char *argv[]) {
                 int x = idx[0]; //idx[0] / DestBitmapHeight;
                 int y = idx[1]; //idx[0] % DestBitmapHeight;
 
-                float SrcBitmapx=((x+minx)*cosine+(y+miny)*sine);
-                float SrcBitmapy=((y+miny)*cosine-(x+minx)*sine);
+                int SrcBitmapx=(int)((x+minx)*cosine+(y+miny)*sine);
+                int SrcBitmapy=(int)((y+miny)*cosine-(x+minx)*sine);
                 if(SrcBitmapx >= 0 && SrcBitmapx < IMAGE_WIDTH && SrcBitmapy >= 0 && SrcBitmapy < IMAGE_HEIGHT)
                    writeResult[x][y]=readImage[SrcBitmapx][SrcBitmapy];
 

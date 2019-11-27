@@ -2,3 +2,4 @@
 #define IMAGE_HEIGHT    (40000L)
 #define IMAGE_SIZE      (IMAGE_WIDTH*IMAGE_HEIGHT)
 
+#define FLOAT_PRECISION double
