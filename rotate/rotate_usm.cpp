@@ -10,6 +10,9 @@
 #define EVENESS_DIVISOR 10
 #define VERIFY_INPUT	0
 #define VERIFY		0
+#define VERIFY_ASCII    0
+#define VERIFY_OPENCV   0
+
 unsigned char* old_image;
 unsigned char* new_image;
 namespace sycl = cl::sycl;
@@ -30,12 +33,10 @@ int main(int argc, char *argv[]) {
     // create a queue to enqueue work on cpu device (there is also gpu_selector)
     //sycl::queue myQueue(sycl::host_selector{});
     sycl::queue myQueue(sycl::gpu_selector{});
-/*
-    old_image = new unsigned char[IMAGE_SIZE];
-    new_image = new unsigned char[IMAGE_MAXOUTPUT_SIZE];
-*/
+
     unsigned char* old_image = (unsigned char*)malloc_shared(IMAGE_SIZE * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
     unsigned char* new_image = (unsigned char*)malloc_shared(IMAGE_MAXOUTPUT_SIZE * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
+
     if(!old_image)
     {
        printf("old_image creation error!\n");
@@ -57,10 +58,15 @@ int main(int argc, char *argv[]) {
     {
         for(int l=0; l<IMAGE_HEIGHT; l++)
         {
+#if VERIFY_ASCII==0
             old_image[i*IMAGE_WIDTH+l] = i;
+#else
+	    old_image[i*IMAGE_WIDTH+l] = (i%90)+33;
+#endif
         }
     }
 #if VERIFY_INPUT==1
+#if VERIFY_ASCII==0
     unsigned char old = old_image[0];
     int rep = 0;
     for(int i=0; i<IMAGE_WIDTH; i++)
@@ -78,7 +84,22 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+#else
+    for(int i=0; i<IMAGE_HEIGHT; i++)
+	printf("%.*s\n", (int)IMAGE_WIDTH , &old_image[i*IMAGE_WIDTH]);
 #endif
+#endif
+#elif VERIFY_OPENCV==1
+    Mat img = imread("input.jpg");
+
+    for(int i=0; i<IMAGE_WIDTH; i++)
+    {
+        for(int l=0; l<IMAGE_HEIGHT; l++)
+        {
+	    Scalar intensity = img.at<uchar>(Point(i, l));
+            old_image[i*IMAGE_WIDTH+l] = intensity.val[0];
+        }
+    }
 #endif
 
     double degrees = 180;
@@ -110,33 +131,10 @@ int main(int argc, char *argv[]) {
     long DestBitmapWidth=(int)ceil(fabs(maxx)-minx);
     long DestBitmapHeight=(int)ceil(fabs(maxy)-miny);
 
-#if CORRECT_EVENESS==1
-    if(DestBitmapWidth%2)
-       DestBitmapWidth++;
-    if(DestBitmapHeight%2)
-       DestBitmapHeight++;
-
-#if DIVIDED_BY_16==0
-    while(count_divisors(DestBitmapWidth*DestBitmapHeight)<EVENESS_DIVISOR || count_divisors(DestBitmapHeight)<EVENESS_DIVISOR || count_divisors(DestBitmapWidth)<EVENESS_DIVISOR) {
-#else
-    while((DestBitmapWidth*DestBitmapHeight)%16) {
-#endif
-	    if((++DestBitmapWidth)%2)
-	       DestBitmapWidth++;
-	    if((++DestBitmapHeight)%2)
-	       DestBitmapHeight++;
-    }
-#endif
-
     if(only_print) {
        printf("%ld %ld %ld\n",DestBitmapWidth,DestBitmapHeight,DestBitmapWidth*DestBitmapHeight);
        return 0;
     }
-
-#if FIXED_DIMENSION==1
-    DestBitmapWidth=45000;
-    DestBitmapHeight=45000;
-#endif
 
     //std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     // new block scope to ensure all SYCL tasks are completed before exiting block
@@ -153,13 +151,14 @@ int main(int argc, char *argv[]) {
             // enqueue a parallel_for task: this is kernel function that will be
             // compiled by a device compiler and executed on a device
             cgh.parallel_for<class simple_test>(sycl::range<2>(DestBitmapWidth,DestBitmapHeight), [=](sycl::id<2> idx) {
-                int x = idx[0]; //idx[0] / DestBitmapHeight;
-                int y = idx[1]; //idx[0] % DestBitmapHeight;
+                FLOAT_PRECISION x = idx[0]; //idx[0] / DestBitmapHeight;
+                FLOAT_PRECISION y = idx[1]; //idx[0] % DestBitmapHeight;
 
                 int SrcBitmapx=(int)((x+minx)*cosine+(y+miny)*sine);
                 int SrcBitmapy=(int)((y+miny)*cosine-(x+minx)*sine);
+
                 if(SrcBitmapx >= 0 && SrcBitmapx < IMAGE_WIDTH && SrcBitmapy >= 0 && SrcBitmapy < IMAGE_HEIGHT)
-                   new_image[x*DestBitmapWidth+y]=old_image[SrcBitmapx*IMAGE_WIDTH+SrcBitmapy];
+                   new_image[(int)(y*DestBitmapWidth+x)]=old_image[SrcBitmapy*IMAGE_WIDTH+SrcBitmapx];
 
             });
             // end of the kernel function
@@ -176,6 +175,7 @@ int main(int argc, char *argv[]) {
     unsigned char old;
     unsigned int rep;
 #endif
+#if VERIFY_ASCII==0
     old = new_image[0];
     rep = 0;
     for(int i=0; i<DestBitmapWidth; i++)
@@ -193,6 +193,27 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+#else
+    for(int i=0; i<DestBitmapHeight; i++)
+    {
+    	for(int l=0; l<DestBitmapWidth; l++)
+	{
+        	printf("%c", new_image[i*DestBitmapWidth+l]);
+	}
+	printf("\n");
+    }
+#endif
+#elif VERIFY_OPENCV==1
+    for(int i=0; i<IMAGE_WIDTH; i++)
+    {
+        for(int l=0; l<IMAGE_HEIGHT; l++)
+        {
+            img.at<uchar>(Point(i, l)) = new_image[i*IMAGE_WIDTH+l];
+        }
+    }
+    namedWindow("image", CV_WINDOW_AUTOSIZE);
+    imshow("image", img);
+    waitKey();
 #endif
 
     return 0;
