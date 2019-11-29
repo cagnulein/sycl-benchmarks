@@ -34,7 +34,8 @@ int main(int argc, char *argv[]) {
     //sycl::queue myQueue(sycl::host_selector{});
     sycl::queue myQueue(sycl::gpu_selector{});
 
-    unsigned char* old_image[IMAGE_HEIGHT];
+    unsigned char** old_image = (unsigned char**)malloc_shared(IMAGE_HEIGHT * sizeof(unsigned char*), myQueue.get_device(), myQueue.get_context());
+
     for(int i=0; i<IMAGE_HEIGHT; i++)
        old_image[i] = (unsigned char*)malloc_shared(IMAGE_WIDTH * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
 
@@ -46,7 +47,7 @@ int main(int argc, char *argv[]) {
 #if VERIFY_ASCII==0
             old_image[i*IMAGE_WIDTH+l] = i;
 #else
-	    old_image[i*IMAGE_WIDTH+l] = (i%90)+33;
+	    old_image[i][l] = (i%90)+33;
 #endif
         }
     }
@@ -70,8 +71,15 @@ int main(int argc, char *argv[]) {
         }
     }
 #else
-    for(int i=0; i<IMAGE_HEIGHT; i++)
-	printf("%.*s\n", (int)IMAGE_WIDTH , &old_image[i*IMAGE_WIDTH]);
+    for(int l=0; l<IMAGE_WIDTH; l++)
+    {
+        for(int i=0; i<IMAGE_HEIGHT; i++)
+        {
+	   printf("%c", old_image[l][i]);
+        }
+
+        printf("\n");
+    }
 #endif
 #endif
 #elif VERIFY_OPENCV==1
@@ -121,7 +129,9 @@ int main(int argc, char *argv[]) {
        return 0;
     }
 
-    unsigned char** new_image = (unsigned char**)malloc_shared(DestBitmapWidth * DestBitmapHeight * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
+    unsigned char** new_image = (unsigned char**)malloc_shared(DestBitmapWidth * sizeof(unsigned char*), myQueue.get_device(), myQueue.get_context());
+    for(int i=0; i<DestBitmapHeight; i++)
+        new_image[i] = (unsigned char*)malloc_shared(DestBitmapWidth * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
 
     //std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     // new block scope to ensure all SYCL tasks are completed before exiting block
@@ -181,11 +191,11 @@ int main(int argc, char *argv[]) {
         }
     }
 #else
-    for(int i=0; i<DestBitmapHeight; i++)
+    for(int l=0; l<DestBitmapWidth; l++)
     {
-    	for(int l=0; l<DestBitmapWidth; l++)
+        for(int i=0; i<DestBitmapHeight; i++)
 	{
-        	printf("%c", new_image[i*DestBitmapWidth+l]);
+        	printf("%c", new_image[l][i]);
 	}
 	printf("\n");
     }
