@@ -34,24 +34,9 @@ int main(int argc, char *argv[]) {
     //sycl::queue myQueue(sycl::host_selector{});
     sycl::queue myQueue(sycl::gpu_selector{});
 
-    unsigned char* old_image = (unsigned char*)malloc_shared(IMAGE_SIZE * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
-    unsigned char* new_image = (unsigned char*)malloc_shared(IMAGE_MAXOUTPUT_SIZE * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
-
-    if(!old_image)
-    {
-       printf("old_image creation error!\n");
-       return 1;
-    }
-    if(!new_image)
-    {
-       printf("new_image creation error!\n");
-       return 1;
-    }
-
-    /*myQueue.submit([&](handlers& h) {
-	h.memcpy(device_old_image, old_image, IMAGE_SIZE * sizeof(unsigned char));
-	h.memcpy(device_old_image, old_image, IMAGE_SIZE * sizeof(unsigned char));
-    });*/
+    unsigned char* old_image[IMAGE_HEIGHT];
+    for(int i=0; i<IMAGE_HEIGHT; i++)
+       old_image[i] = (unsigned char*)malloc_shared(IMAGE_WIDTH * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
 
 #if VERIFY==1
     for(int i=0; i<IMAGE_WIDTH; i++)
@@ -136,6 +121,10 @@ int main(int argc, char *argv[]) {
        return 0;
     }
 
+    unsigned char* new_image[DestBitmapHeight];
+    for(int i=0; i<DestBitmapHeight; i++)
+       new_image[i] = (unsigned char*)malloc_shared(DestBitmapWidth * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
+
     //std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     // new block scope to ensure all SYCL tasks are completed before exiting block
     {
@@ -151,14 +140,14 @@ int main(int argc, char *argv[]) {
             // enqueue a parallel_for task: this is kernel function that will be
             // compiled by a device compiler and executed on a device
             cgh.parallel_for<class simple_test>(sycl::range<2>(DestBitmapWidth,DestBitmapHeight), [=](sycl::id<2> idx) {
-                FLOAT_PRECISION x = idx[0]; //idx[0] / DestBitmapHeight;
-                FLOAT_PRECISION y = idx[1]; //idx[0] % DestBitmapHeight;
+                int x = idx[0]; //idx[0] / DestBitmapHeight;
+                int y = idx[1]; //idx[0] % DestBitmapHeight;
 
                 int SrcBitmapx=(int)((x+minx)*cosine+(y+miny)*sine);
                 int SrcBitmapy=(int)((y+miny)*cosine-(x+minx)*sine);
 
                 if(SrcBitmapx >= 0 && SrcBitmapx < IMAGE_WIDTH && SrcBitmapy >= 0 && SrcBitmapy < IMAGE_HEIGHT)
-                   new_image[(int)(y*DestBitmapWidth+x)]=old_image[SrcBitmapy*IMAGE_WIDTH+SrcBitmapx];
+                   new_image[x][y]=old_image[SrcBitmapx][SrcBitmapx];
 
             });
             // end of the kernel function
