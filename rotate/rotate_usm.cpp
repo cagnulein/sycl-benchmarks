@@ -8,9 +8,9 @@
 #define CORRECT_EVENESS 1
 #define DIVIDED_BY_16   1
 #define EVENESS_DIVISOR 10
-#define VERIFY_INPUT	0
-#define VERIFY		0
-#define VERIFY_ASCII    0
+#define VERIFY_INPUT	1
+#define VERIFY		1
+#define VERIFY_ASCII    1
 #define VERIFY_OPENCV   0
 
 unsigned char* old_image;
@@ -35,23 +35,12 @@ int main(int argc, char *argv[]) {
     sycl::queue myQueue(sycl::gpu_selector{});
 
     unsigned char* old_image = (unsigned char*)malloc_shared(IMAGE_SIZE * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
-    unsigned char* new_image = (unsigned char*)malloc_shared(IMAGE_MAXOUTPUT_SIZE * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
 
     if(!old_image)
     {
        printf("old_image creation error!\n");
        return 1;
     }
-    if(!new_image)
-    {
-       printf("new_image creation error!\n");
-       return 1;
-    }
-
-    /*myQueue.submit([&](handlers& h) {
-	h.memcpy(device_old_image, old_image, IMAGE_SIZE * sizeof(unsigned char));
-	h.memcpy(device_old_image, old_image, IMAGE_SIZE * sizeof(unsigned char));
-    });*/
 
 #if VERIFY==1
     for(int i=0; i<IMAGE_WIDTH; i++)
@@ -131,6 +120,14 @@ int main(int argc, char *argv[]) {
     long DestBitmapWidth=(int)ceil(fabs(maxx)-minx);
     long DestBitmapHeight=(int)ceil(fabs(maxy)-miny);
 
+    unsigned char* new_image = (unsigned char*)malloc_shared(IMAGE_MAXOUTPUT_HEIGHT * DestBitmapWidth * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
+
+    if(!new_image)
+    {
+       printf("new_image creation error!\n");
+       return 1;
+    }
+
     if(only_print) {
        printf("%ld %ld %ld\n",DestBitmapWidth,DestBitmapHeight,DestBitmapWidth*DestBitmapHeight);
        return 0;
@@ -151,14 +148,18 @@ int main(int argc, char *argv[]) {
             // enqueue a parallel_for task: this is kernel function that will be
             // compiled by a device compiler and executed on a device
             cgh.parallel_for<class simple_test>(sycl::range<2>(DestBitmapWidth,DestBitmapHeight), [=](sycl::id<2> idx) {
-                FLOAT_PRECISION x = idx[0]; //idx[0] / DestBitmapHeight;
-                FLOAT_PRECISION y = idx[1]; //idx[0] % DestBitmapHeight;
+                int x = idx[0]; //idx[0] / DestBitmapHeight;
+                int y = idx[1]; //idx[0] % DestBitmapHeight;
 
                 int SrcBitmapx=(int)((x+minx)*cosine+(y+miny)*sine);
                 int SrcBitmapy=(int)((y+miny)*cosine-(x+minx)*sine);
 
                 if(SrcBitmapx >= 0 && SrcBitmapx < IMAGE_WIDTH && SrcBitmapy >= 0 && SrcBitmapy < IMAGE_HEIGHT)
-                   new_image[(int)(y*DestBitmapWidth+x)]=old_image[SrcBitmapy*IMAGE_WIDTH+SrcBitmapx];
+                {
+                   unsigned char (*src)[IMAGE_HEIGHT]=(unsigned char (*)[IMAGE_HEIGHT])old_image;
+                   unsigned char (*dst)[(int)IMAGE_MAXOUTPUT_HEIGHT]=(unsigned char (*)[(int)IMAGE_MAXOUTPUT_HEIGHT])new_image;
+                   dst[x][y]=src[SrcBitmapx][SrcBitmapy];
+                }
 
             });
             // end of the kernel function
@@ -198,7 +199,8 @@ int main(int argc, char *argv[]) {
     {
     	for(int l=0; l<DestBitmapWidth; l++)
 	{
-        	printf("%c", new_image[i*DestBitmapWidth+l]);
+                unsigned char (*dst)[(int)IMAGE_MAXOUTPUT_HEIGHT]=(unsigned char (*)[(int)IMAGE_MAXOUTPUT_HEIGHT])new_image;
+        	printf("%c", dst[l][i]);
 	}
 	printf("\n");
     }
