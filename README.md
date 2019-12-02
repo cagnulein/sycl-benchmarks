@@ -61,3 +61,5 @@ sys     0m0.147s
 3) https://github.com/intel/llvm/releases/tag/2019-09
 4) http://www.leunen.com/cbuilder/rotbmp.html
 5) https://github.com/intel/compute-runtime/issues/235
+6) https://github.com/intel/llvm/issues/887
+7) https://github.com/intel/compute-runtime/issues/237
