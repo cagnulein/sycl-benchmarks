@@ -34,10 +34,8 @@ int main(int argc, char *argv[]) {
     //sycl::queue myQueue(sycl::host_selector{});
     sycl::queue myQueue(sycl::gpu_selector{});
 
-    unsigned char** old_image = (unsigned char**)malloc_shared(IMAGE_HEIGHT * sizeof(unsigned char*), myQueue.get_device(), myQueue.get_context());
-
-    for(int i=0; i<IMAGE_HEIGHT; i++)
-       old_image[i] = (unsigned char*)malloc_shared(IMAGE_WIDTH * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
+    using array_t = unsigned char[IMAGE_WIDTH][IMAGE_HEIGHT];
+    auto &old_image = *static_cast<array_t *>(malloc_shared(sizeof(array_t), myQueue.get_device(), myQueue.get_context()));
 
 #if VERIFY==1
     for(int i=0; i<IMAGE_WIDTH; i++)
@@ -129,9 +127,8 @@ int main(int argc, char *argv[]) {
        return 0;
     }
 
-    unsigned char** new_image = (unsigned char**)malloc_shared(DestBitmapWidth * sizeof(unsigned char*), myQueue.get_device(), myQueue.get_context());
-    for(int i=0; i<DestBitmapHeight; i++)
-        new_image[i] = (unsigned char*)malloc_shared(DestBitmapWidth * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
+    using array_new_t = unsigned char[DestBitmapWidth][DestBitmapHeight];
+    auto new_image = *static_cast<array_new_t *>(malloc_shared(sizeof(array_new_t), myQueue.get_device(), myQueue.get_context()));
 
     //std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     // new block scope to ensure all SYCL tasks are completed before exiting block
