@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
        return 0;
     }
 
-    unsigned char** new_image = (unsigned char**)malloc_shared(DestBitmapWidth * sizeof(unsigned char*), myQueue.get_device(), myQueue.get_context());
+    unsigned char** new_image = (unsigned char**)malloc_shared(DestBitmapHeight * sizeof(unsigned char*), myQueue.get_device(), myQueue.get_context());
     for(int i=0; i<DestBitmapHeight; i++)
         new_image[i] = (unsigned char*)malloc_shared(DestBitmapWidth * sizeof(unsigned char), myQueue.get_device(), myQueue.get_context());
 
